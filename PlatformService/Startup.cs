@@ -70,7 +70,7 @@ namespace PlatformService
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
             
-            PrepDb.PrePopulation(app);
+            PrepDb.PrePopulation(app, env.IsProduction());
         }
     }
 }
