@@ -8,6 +8,7 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
 using PlatformService.AsyncDataServices;
 using PlatformService.Data;
+using PlatformService.SyncDataServices.Grpc;
 using PlatformService.SyncDataServices.Http;
 
 namespace PlatformService
@@ -43,7 +44,7 @@ namespace PlatformService
 
             services.AddHttpClient<ICommandDataClient, HttpCommandDataClient>();
             services.AddSingleton<IMessageBusClient, MessageBusClient>();
-            
+            services.AddGrpc();
             services.AddControllers();
 
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -70,7 +71,11 @@ namespace PlatformService
 
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapGrpcService<GrpcPlatformService>();
+            });
             
             PrepDb.PrePopulation(app, env.IsProduction());
         }
